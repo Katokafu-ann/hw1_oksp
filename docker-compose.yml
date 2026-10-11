@@ -1,0 +1,15 @@
+services:
+  db:
+    image: postgres:16
+    container_name: anna_akulova_library_db
+    environment:
+      POSTGRES_USER: anna_akulova
+      POSTGRES_PASSWORD: changeme
+      POSTGRES_DB: anna_akulova
+    ports:
+      - "5432:5432"
+    volumes:
+      - anna_akulova_pgdata:/var/lib/postgresql/data
+
+volumes:
+  anna_akulova_pgdata:

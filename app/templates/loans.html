@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Выдачи</h1>
+<p class="muted">Всего записей: {{ total }}</p>
+
+<form class="filters" method="get" action="/">
+  <input type="text" name="q" value="{{ q }}" placeholder="Поиск: читатель, книга, инв. №">
+  <select name="status">
+    <option value="" {% if not status %}selected{% endif %}>все</option>
+    <option value="open" {% if status == 'open' %}selected{% endif %}>на руках</option>
+    <option value="returned" {% if status == 'returned' %}selected{% endif %}>возвращены</option>
+    <option value="overdue" {% if status == 'overdue' %}selected{% endif %}>просрочены</option>
+  </select>
+  <input type="hidden" name="size" value="{{ size }}">
+  <button type="submit">Фильтр</button>
+</form>
+
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Читатель</th>
+      <th>Книга</th>
+      <th>Выдана</th>
+      <th>Срок</th>
+      <th>Возврат</th>
+      <th>Штраф</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for loan in items %}
+    <tr>
+      <td>{{ loan.id }}</td>
+      <td>{{ loan.reader.full_name }}<br><span class="muted">{{ loan.reader.ticket_number }}</span></td>
+      <td>{{ loan.copy.book.title }}<br><span class="muted">{{ loan.copy.inventory_number }}</span></td>
+      <td>{{ loan.issued_at }}</td>
+      <td>{{ loan.due_at }}</td>
+      <td>
+        {% if loan.returned_at %}
+          {{ loan.returned_at }}
+        {% else %}
+          <span class="badge {% if loan.due_at.isoformat() < '9999' %}{% endif %}">на руках</span>
+        {% endif %}
+      </td>
+      <td>{{ loan.fine_amount }} ₽</td>
+      <td><a href="/loans/{{ loan.id }}">карточка</a></td>
+    </tr>
+  {% else %}
+    <tr><td colspan="8">Нет записей</td></td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+<div class="pager">
+  {% if page > 1 %}
+    <a class="btn" href="/?page={{ page - 1 }}&size={{ size }}&status={{ status }}&q={{ q }}">←</a>
+  {% endif %}
+  <span>стр. {{ page }} / {{ pages }}</span>
+  {% if page < pages %}
+    <a class="btn" href="/?page={{ page + 1 }}&size={{ size }}&status={{ status }}&q={{ q }}">→</a>
+  {% endif %}
+</div>
+{% endblock %}

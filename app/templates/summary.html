@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Сводка</h1>
+<p class="muted">Итоговые показатели по всем данным · {{ project }}</p>
+
+<div class="stats">
+  <div class="stat">
+    <div class="n">{{ summary.copies_on_hand }}</div>
+    <div class="muted">экземпляров на руках</div>
+  </div>
+  <div class="stat">
+    <div class="n">{{ summary.overdue_on_hand }}</div>
+    <div class="muted">из них просрочено</div>
+  </div>
+  <div class="stat">
+    <div class="n">{{ summary.total_loans }}</div>
+    <div class="muted">всего выдач</div>
+  </div>
+  <div class="stat">
+    <div class="n">{{ summary.total_fines }} ₽</div>
+    <div class="muted">сумма штрафов</div>
+  </div>
+</div>
+
+<h2>Книги, которые берут чаще прочих</h2>
+<table>
+  <thead>
+    <tr><th>#</th><th>Книга</th><th>Автор</th><th>Выдач</th></tr>
+  </thead>
+  <tbody>
+  {% for b in summary.popular_books %}
+    <tr>
+      <td>{{ loop.index }}</td>
+      <td>{{ b.title }}</td>
+      <td>{{ b.author }}</td>
+      <td>{{ b.loan_count }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

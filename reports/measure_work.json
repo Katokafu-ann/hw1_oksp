@@ -1,0 +1,58 @@
+{
+  "volume": "work",
+  "account": "demo",
+  "repeats": 20,
+  "warmup": 3,
+  "operations": [
+    {
+      "path": "GET /api/loans?page=1&size=20",
+      "median_ms": 8.07,
+      "p95_ms": 10.39,
+      "max_ms": 10.89,
+      "db_median_ms": 0.0,
+      "app_median_ms": 8.07,
+      "queries_median": 0.0,
+      "n": 20
+    },
+    {
+      "path": "GET /api/loans?page=1&size=20&status=overdue",
+      "median_ms": 10.72,
+      "p95_ms": 12.44,
+      "max_ms": 12.61,
+      "db_median_ms": 0.0,
+      "app_median_ms": 10.72,
+      "queries_median": 0.0,
+      "n": 20
+    },
+    {
+      "path": "GET /api/loans?page=1&size=20&q=книга",
+      "median_ms": 308.1,
+      "p95_ms": 312.97,
+      "max_ms": 329.29,
+      "db_median_ms": 0.0,
+      "app_median_ms": 308.1,
+      "queries_median": 0.0,
+      "n": 20
+    },
+    {
+      "path": "GET /api/loans/1",
+      "median_ms": 1.95,
+      "p95_ms": 4.35,
+      "max_ms": 4.75,
+      "db_median_ms": 0.0,
+      "app_median_ms": 1.95,
+      "queries_median": 0.0,
+      "n": 20
+    },
+    {
+      "path": "GET /api/summary",
+      "median_ms": 881.89,
+      "p95_ms": 961.24,
+      "max_ms": 968.78,
+      "db_median_ms": 0.0,
+      "app_median_ms": 881.89,
+      "queries_median": 0.0,
+      "n": 20
+    }
+  ]
+}

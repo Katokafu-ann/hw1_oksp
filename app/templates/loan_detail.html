@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Выдача №{{ loan.id }}</h1>
+
+<div class="card">
+  <h2>Читатель</h2>
+  <p><strong>{{ loan.reader.full_name }}</strong></p>
+  <p class="muted">Билет: {{ loan.reader.ticket_number }} · {{ loan.reader.email }}</p>
+</div>
+
+<div class="card">
+  <h2>Экземпляр / книга</h2>
+  <p><strong>{{ loan.copy.book.title }}</strong> — {{ loan.copy.book.author }}</p>
+  <p class="muted">ISBN {{ loan.copy.book.isbn }} · инв. № {{ loan.copy.inventory_number }} · статус экземпляра: {{ loan.copy.status }}</p>
+  <p>{{ loan.copy.book.description }}</p>
+</div>
+
+<div class="card">
+  <h2>Сроки и штраф</h2>
+  <p>Выдана: {{ loan.issued_at }}</p>
+  <p>Срок возврата: {{ loan.due_at }}</p>
+  <p>Фактический возврат: {{ loan.returned_at or 'ещё на руках' }}</p>
+  <p>Просрочка: {{ loan.overdue_days }} дн.</p>
+  <p>Штраф: {{ loan.fine_amount }} ₽</p>
+</div>
+
+<p><a href="/">← к списку</a></p>
+{% endblock %}

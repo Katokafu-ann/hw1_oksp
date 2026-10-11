@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ project }} — библиотека</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header>
+    <div>
+      <strong>{{ project }}</strong>
+      <span class="muted"> · выдача книг в библиотеке</span>
+    </div>
+    <nav>
+      <a href="/">Выдачи</a>
+      <a href="/summary">Сводка</a>
+      <form action="/logout" method="post" style="display:inline">
+        <button type="submit">Выйти</button>
+      </form>
+    </nav>
+  </header>
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

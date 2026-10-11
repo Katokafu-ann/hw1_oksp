@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ project }} — вход</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="login-box">
+    <h1>{{ project }}</h1>
+    <p class="muted">Сервис выдачи книг в библиотеке</p>
+    <form method="post" action="/login">
+      <label for="username">Логин</label>
+      <input id="username" name="username" value="demo" required>
+      <label for="password">Пароль</label>
+      <input id="password" name="password" type="password" value="demo" required>
+      <p style="margin-top:1rem"><button type="submit">Войти</button></p>
+    </form>
+    {% if error %}<p class="error">{{ error }}</p>{% endif %}
+  </div>
+</body>
+</html>
