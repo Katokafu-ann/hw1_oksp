@@ -1,5 +1,3 @@
-"""Бизнес-правила выдачи книг (вариант 1)."""
-
 from datetime import date, timedelta
 
 from app.config import settings

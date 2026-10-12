@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Замеры ДЗ1: время ответа (p50/p95/max) и разложение app/БД."""
+
 
 from __future__ import annotations
 

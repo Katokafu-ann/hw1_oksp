@@ -14,7 +14,6 @@ from app.db import get_db, init_schema
 from app.models import User
 from app.routers import api
 from app import services
-from app.timing import disable_timing, reset_timing, snapshot
 
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -23,6 +22,9 @@ app = FastAPI(title="anna_akulova — библиотека", version="1.0.0")
 app.include_router(api.router)
 app.mount("/static", StaticFiles(directory=BASE_DIR / "static"), name="static")
 templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
+
+
+from app.timing import disable_timing, reset_timing, snapshot
 
 
 @app.middleware("http")

@@ -1,31 +1,47 @@
-"""Учёт времени SQL для раздела 2.6 отчёта ДЗ1 (не оптимизация)."""
-
 from __future__ import annotations
-
+import threading
 import time
-from contextvars import ContextVar
-
 from sqlalchemy import event
 from sqlalchemy.engine import Engine
 
 
-timing_enabled: ContextVar[bool] = ContextVar("timing_enabled", default=False)
-db_time_ms: ContextVar[float] = ContextVar("db_time_ms", default=0.0)
-db_query_count: ContextVar[int] = ContextVar("db_query_count", default=0)
+_lock = threading.Lock()
+_enabled = False
+_db_time_ms = 0.0
+_db_query_count = 0
+_query_starts: dict[int, float] = {}
 
 
 def reset_timing() -> None:
-    timing_enabled.set(True)
-    db_time_ms.set(0.0)
-    db_query_count.set(0)
+    global _enabled, _db_time_ms, _db_query_count, _query_starts
+    with _lock:
+        _enabled = True
+        _db_time_ms = 0.0
+        _db_query_count = 0
+        _query_starts = {}
 
 
 def disable_timing() -> None:
-    timing_enabled.set(False)
+    global _enabled
+    with _lock:
+        _enabled = False
 
 
 def snapshot() -> tuple[float, int]:
-    return db_time_ms.get(), db_query_count.get()
+    with _lock:
+        return _db_time_ms, _db_query_count
+
+
+def bind_stats(_stats=None) -> None:
+    """Совместимость с db.py. Счётчики сбрасывает только middleware."""
+    global _enabled
+    with _lock:
+        _enabled = True
+
+
+def unbind_stats(_stats=None) -> None:
+    """Совместимость с db.py. Не отключает учёт — это делает middleware."""
+    pass
 
 
 def register_timing_listeners(engine: Engine) -> None:
@@ -34,18 +50,20 @@ def register_timing_listeners(engine: Engine) -> None:
 
     @event.listens_for(engine, "before_cursor_execute")
     def before_cursor_execute(conn, _cursor, _statement, _parameters, _context, _executemany):
-        if timing_enabled.get():
-            conn.info["anna_query_start"] = time.perf_counter()
+        with _lock:
+            if _enabled:
+                _query_starts[id(conn)] = time.perf_counter()
 
     @event.listens_for(engine, "after_cursor_execute")
     def after_cursor_execute(conn, _cursor, _statement, _parameters, _context, _executemany):
-        if not timing_enabled.get():
-            return
-        started = conn.info.pop("anna_query_start", None)
-        if started is None:
-            return
-        elapsed = (time.perf_counter() - started) * 1000
-        db_time_ms.set(db_time_ms.get() + elapsed)
-        db_query_count.set(db_query_count.get() + 1)
+        global _db_time_ms, _db_query_count
+        with _lock:
+            if not _enabled:
+                return
+            started = _query_starts.pop(id(conn), None)
+            if started is None:
+                return
+            _db_time_ms += (time.perf_counter() - started) * 1000
+            _db_query_count += 1
 
     engine._anna_timing_registered = True  # type: ignore[attr-defined]

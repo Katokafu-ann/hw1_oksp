@@ -14,7 +14,7 @@ from app.models import User
 
 security = HTTPBearer(auto_error=False)
 
-# Простое хранилище токенов в памяти (достаточно для учебного сервиса ДЗ1).
+
 _tokens: dict[str, tuple[int, datetime]] = {}
 
 

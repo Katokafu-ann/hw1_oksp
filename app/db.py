@@ -4,8 +4,10 @@ from collections.abc import Generator
 from sqlalchemy import create_engine, event, text
 from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
 
+from fastapi import Request
+
 from app.config import settings
-from app.timing import register_timing_listeners
+from app.timing import bind_stats, register_timing_listeners, unbind_stats
 
 
 engine = create_engine(settings.database_url, pool_pre_ping=True)
@@ -26,11 +28,15 @@ if os.getenv("SKIP_DB_INIT") != "1":
         cursor.close()
 
 
-def get_db() -> Generator[Session, None, None]:
+def get_db(request: Request) -> Generator[Session, None, None]:
+    stats = {"ms": 0.0, "n": 0}
+    request.state.db_stats = stats
+    bind_stats(stats)
     db = SessionLocal()
     try:
         yield db
     finally:
+        unbind_stats()
         db.close()
 
 
